@@ -78,14 +78,16 @@ public class Practice {
     // Display all the employees' first names
     public static List<String> getAllEmployeesFirstName() {
         return getAllEmployees().stream()
-                .map(p-> p.getFirstName())
+                //.map(p-> p.getFirstName()) // used method reference instead per IntelliJ suggestion.
+                .map(Employee::getFirstName)
                 .collect(Collectors.toList());
     }
 
     // Display all the countries' names
     public static List<String> getAllCountryNames() {
         return getAllCountries().stream()
-                .map(p->p.getCountryName())
+                //.map(p->p.getCountryName())
+                .map(Country::getCountryName)
                 .collect(Collectors.toList());
     }
 
@@ -112,10 +114,18 @@ public class Practice {
 
     // Display the region of the IT department
     public static Region getRegionOfITDepartment() throws Exception {
+        /*
         Department dep = getAllDepartments().stream()
-                .filter(p->p.getDepartmentName().equals("IT"))
+                        .filter(p->p.getDepartmentName().equals("IT"))
                 .findFirst().get();
         return dep.getLocation().getCountry().getRegion();
+         */
+        return getAllDepartments().stream()
+                .filter(department -> department.getDepartmentName().equals("IT"))
+                .findFirst().orElseThrow(()-> new Exception("Department not found!"))
+                .getLocation().getCountry().getRegion();
+
+
     }
 
     // Display all the departments where the region of department is 'Europe'
@@ -129,7 +139,8 @@ public class Practice {
     // Display if there is any employee with salary less than 1000. If there is none, the method should return true
     public static boolean checkIfThereIsNoSalaryLessThan1000() {
         return getAllEmployees().stream()
-                .map(p->p.getSalary())
+                //.map(p->p.getSalary())
+                .map(Employee::getSalary)
                 .noneMatch(p->p<1000);
     }
 
@@ -159,14 +170,16 @@ public class Practice {
     public static Long getGrantDouglasSalary() throws Exception {
         return getAllEmployees().stream()
                 .filter(p-> p.getLastName().equals("Grant") &&p.getFirstName().equals("Douglas"))
-                .map(p->p.getSalary())
+                //.map(p->p.getSalary())
+                .map(Employee::getSalary)
                 .findFirst().get();
     }
 
     // Display the maximum salary an employee gets
     public static Long getMaxSalary() throws Exception {
         return getAllEmployees().stream()
-                .map(p->p.getSalary())
+                //.map(p->p.getSalary())
+                .map(Employee::getSalary)
                 .reduce((a,b) -> ( a>b? a:b)).get();
     }
 
@@ -203,7 +216,8 @@ public class Practice {
     public static Long getMaxSalaryInAmericasRegion() throws Exception {
         return employeeService.readAll().stream()
                 .filter(p-> p.getDepartment().getLocation().getCountry().getRegion().getRegionName().equals("Americas"))
-                .map(p->p.getSalary())
+                //.map(p->p.getSalary())
+                .map(Employee::getSalary)
                 .reduce((a,b)->a>b? a : b).get();
     }
 
@@ -211,7 +225,8 @@ public class Practice {
     public static Long getSecondMaxSalary() throws Exception {
         return  employeeService.readAll().stream()
                 .sorted(comparing(Employee::getSalary).reversed())
-                .map(p->p.getSalary())
+                //.map(p->p.getSalary())
+                .map(Employee::getSalary)
                 .distinct()
                 .skip(1)
                 .findFirst().get();
@@ -228,7 +243,8 @@ public class Practice {
     // Display the minimum salary an employee gets
     public static Long getMinSalary() throws Exception {
         return employeeService.readAll().stream()
-                .map(p->p.getSalary())
+                //.map(p->p.getSalary())
+                .map(Employee::getSalary)
                 .sorted()
                 .reduce((a,b) -> a<b?a:b).get();
     }
@@ -250,7 +266,8 @@ public class Practice {
     public static Long getSecondMinSalary() {
 
         return employeeService.readAll().stream()
-                .map(p->p.getSalary())
+                //.map(p->p.getSalary())
+                .map(Employee::getSalary)
                 .sorted()
                 .distinct()
                 .skip(1)
@@ -268,7 +285,8 @@ public class Practice {
     // Display the average salary of the employees
     public static Double getAverageSalary() {
         return employeeService.readAll().stream()
-                .collect(Collectors.averagingDouble(p->p.getSalary()));
+                //.collect(Collectors.averagingDouble(p->p.getSalary()));
+                .collect(Collectors.averagingDouble(Employee::getSalary));
     }
 
     // Display all the employees who are making more than average salary
@@ -294,7 +312,8 @@ public class Practice {
 
     // Display the total number of the departments
     public static Long getTotalDepartmentsNumber() {
-        return departmentService.readAll().stream().collect(Collectors.counting());
+        //return departmentService.readAll().stream().collect(Collectors.counting());
+        return departmentService.readAll().stream().count();
     }
 
     // Display the employee whose first name is 'Alyssa' and manager's first name is 'Eleni' and department name is 'Sales'
